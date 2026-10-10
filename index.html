@@ -1,1 +1,607 @@
+```html
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive HTML Test Bench</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Font: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: 'var(--brand-50)',
+              100: 'var(--brand-100)',
+              500: 'var(--brand-500)',
+              600: 'var(--brand-600)',
+              700: 'var(--brand-700)',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --brand-50: #eef2ff;
+      --brand-100: #e0e7ff;
+      --brand-500: #6366f1;
+      --brand-600: #4f46e5;
+      --brand-700: #4338ca;
+      --brand-glow: rgba(99, 102, 241, 0.25);
+    }
+
+    [data-theme="emerald"] {
+      --brand-50: #ecfdf5;
+      --brand-100: #d1fae5;
+      --brand-500: #10b981;
+      --brand-600: #059669;
+      --brand-700: #047857;
+      --brand-glow: rgba(16, 185, 129, 0.25);
+    }
+
+    [data-theme="rose"] {
+      --brand-50: #fff1f2;
+      --brand-100: #ffe4e6;
+      --brand-500: #f43f5e;
+      --brand-600: #e11d48;
+      --brand-700: #be123c;
+      --brand-glow: rgba(244, 63, 94, 0.25);
+    }
+
+    [data-theme="amber"] {
+      --brand-50: #fffbeb;
+      --brand-100: #fef3c7;
+      --brand-500: #f59e0b;
+      --brand-600: #d97706;
+      --brand-700: #b45309;
+      --brand-glow: rgba(245, 158, 11, 0.25);
+    }
+
+    [data-theme="cyan"] {
+      --brand-50: #ecfeff;
+      --brand-100: #cffafe;
+      --brand-500: #06b6d4;
+      --brand-600: #0891b2;
+      --brand-700: #0e7490;
+      --brand-glow: rgba(6, 182, 212, 0.25);
+    }
+
+    /* Glassmorphism subtle effects */
+    .glass-card {
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .glow-effect {
+      box-shadow: 0 0 25px -5px var(--brand-glow);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090d16;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white transition-colors duration-300">
+  <!-- Ambient Background Accents -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-indigo-600/10 blur-3xl"></div>
+    <div class="absolute top-1/2 -right-32 w-96 h-96 rounded-full bg-emerald-600/10 blur-3xl"></div>
+    <div class="absolute -bottom-32 left-1/3 w-96 h-96 rounded-full bg-rose-600/10 blur-3xl"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 w-full glass-card border-b border-slate-800/80 px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center shadow-lg shadow-brand-500/20 text-white font-extrabold text-lg">
+        ⚡
+      </div>
+      <div>
+        <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
+          HTML Test Bench <span class="text-xs px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-500 font-semibold border border-brand-500/30">v2.4</span>
+        </h1>
+        <p class="text-xs text-slate-400">UI Elements & Interaction Sandbox</p>
+      </div>
+    </div>
+
+    <!-- Theme Accents Selector -->
+    <div class="flex items-center gap-2 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800">
+      <span class="text-xs text-slate-400 px-2 font-medium hidden sm:inline">Theme:</span>
+      <button onclick="setTheme('indigo')" class="w-5 h-5 rounded-full bg-indigo-500 hover:scale-110 transition-transform focus:ring-2 ring-offset-2 ring-offset-slate-900 ring-indigo-400" title="Indigo Theme"></button>
+      <button onclick="setTheme('emerald')" class="w-5 h-5 rounded-full bg-emerald-500 hover:scale-110 transition-transform focus:ring-2 ring-offset-2 ring-offset-slate-900 ring-emerald-400" title="Emerald Theme"></button>
+      <button onclick="setTheme('rose')" class="w-5 h-5 rounded-full bg-rose-500 hover:scale-110 transition-transform focus:ring-2 ring-offset-2 ring-offset-slate-900 ring-rose-400" title="Rose Theme"></button>
+      <button onclick="setTheme('amber')" class="w-5 h-5 rounded-full bg-amber-500 hover:scale-110 transition-transform focus:ring-2 ring-offset-2 ring-offset-slate-900 ring-amber-400" title="Amber Theme"></button>
+      <button onclick="setTheme('cyan')" class="w-5 h-5 rounded-full bg-cyan-500 hover:scale-110 transition-transform focus:ring-2 ring-offset-2 ring-offset-slate-900 ring-cyan-400" title="Cyan Theme"></button>
+    </div>
+  </header>
+
+  <!-- Main Grid Content -->
+  <main class="relative z-10 flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <!-- Card 1: Live Digital Clock & Time Bench -->
+    <div class="glass-card rounded-2xl p-6 flex flex-col justify-between shadow-xl transition-all hover:scale-[1.01]">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800/80">
+        <div class="flex items-center gap-2">
+          <span class="text-brand-500">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </span>
+          <h2 class="font-semibold text-slate-200">System Time & Clock</h2>
+        </div>
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse mr-1.5"></span> LIVE
+        </span>
+      </div>
+
+      <div class="my-6 text-center">
+        <div id="digitalClock" class="font-mono text-3xl sm:text-4xl font-bold tracking-wider text-white drop-shadow">
+          00:00:00
+        </div>
+        <div id="digitalDate" class="text-sm font-medium text-slate-400 mt-2">
+          Loading Date...
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+        <span>Format: 12-Hour</span>
+        <button id="toggleTimeFormat" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors border border-slate-700">
+          Toggle 24H
+        </button>
+      </div>
+    </div>
+
+    <!-- Card 2: Interactive Counter State -->
+    <div class="glass-card rounded-2xl p-6 flex flex-col justify-between shadow-xl transition-all hover:scale-[1.01]">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800/80">
+        <div class="flex items-center gap-2">
+          <span class="text-brand-500">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
+          </span>
+          <h2 class="font-semibold text-slate-200">State Counter</h2>
+        </div>
+        <span id="counterStatus" class="text-xs text-slate-400 font-mono">Step: 1</span>
+      </div>
+
+      <div class="my-6 text-center">
+        <div id="counterValue" class="font-mono text-5xl font-extrabold text-brand-500 transition-transform duration-100">
+          0
+        </div>
+        <p class="text-xs text-slate-400 mt-2">Test state updates & fast re-rendering</p>
+      </div>
+
+      <div class="space-y-3">
+        <div class="grid grid-cols-3 gap-2">
+          <button id="btnDecrement" class="py-2.5 bg-slate-800/80 hover:bg-slate-700 active:scale-95 text-slate-200 font-semibold rounded-xl border border-slate-700 transition-all flex items-center justify-center">
+            - 1
+          </button>
+          <button id="btnReset" class="py-2.5 bg-rose-500/10 hover:bg-rose-500/20 active:scale-95 text-rose-400 font-medium rounded-xl border border-rose-500/20 transition-all text-xs flex items-center justify-center">
+            Reset
+          </button>
+          <button id="btnIncrement" class="py-2.5 bg-brand-600 hover:bg-brand-500 active:scale-95 text-white font-semibold rounded-xl transition-all flex items-center justify-center shadow-lg shadow-brand-500/25">
+            + 1
+          </button>
+        </div>
+        <div class="flex items-center justify-center gap-2 text-xs text-slate-400">
+          <span>Step Multiplier:</span>
+          <button class="step-btn px-2 py-0.5 rounded bg-brand-500/20 text-brand-400 font-bold" data-step="1">1x</button>
+          <button class="step-btn px-2 py-0.5 rounded bg-slate-800 text-slate-300 hover:bg-slate-700" data-step="5">5x</button>
+          <button class="step-btn px-2 py-0.5 rounded bg-slate-800 text-slate-300 hover:bg-slate-700" data-step="10">10x</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: Dynamic Input & Toasts -->
+    <div class="glass-card rounded-2xl p-6 flex flex-col justify-between shadow-xl transition-all hover:scale-[1.01]">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800/80">
+        <div class="flex items-center gap-2">
+          <span class="text-brand-500">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          </span>
+          <h2 class="font-semibold text-slate-200">Toast & Alert Tester</h2>
+        </div>
+        <span class="text-xs text-slate-400">Event Triggers</span>
+      </div>
+
+      <div class="my-4 space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Custom Message</label>
+          <input id="toastInput" type="text" placeholder="Type something to alert..." value="Everything working fine! 👍" 
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 pt-1">
+          <button onclick="triggerToast('success')" class="py-2 px-3 text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-xl transition-all text-center">
+            Success
+          </button>
+          <button onclick="triggerToast('info')" class="py-2 px-3 text-xs font-semibold bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 rounded-xl transition-all text-center">
+            Info
+          </button>
+          <button onclick="triggerToast('error')" class="py-2 px-3 text-xs font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-xl transition-all text-center">
+            Warning
+          </button>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-slate-800/80 text-xs text-slate-400 flex items-center justify-between">
+        <span>No default blocking alerts used</span>
+        <span class="text-emerald-400 font-mono">100% Safe</span>
+      </div>
+    </div>
+
+    <!-- Card 4: Quick List Manager (CRUD DOM Test) -->
+    <div class="glass-card rounded-2xl p-6 flex flex-col justify-between shadow-xl transition-all hover:scale-[1.01] md:col-span-2">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800/80">
+        <div class="flex items-center gap-2">
+          <span class="text-brand-500">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          </span>
+          <h2 class="font-semibold text-slate-200">Dynamic DOM Task Tester</h2>
+        </div>
+        <span id="itemCount" class="text-xs bg-slate-800 px-2.5 py-1 rounded-full text-slate-300 font-mono">3 Items</span>
+      </div>
+
+      <!-- Add Input Row -->
+      <form id="itemForm" class="flex gap-2 my-4">
+        <input id="itemInputField" type="text" placeholder="Add an item to the reactive test list..." 
+          class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500">
+        <button type="submit" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 active:scale-95 text-white font-medium text-sm rounded-xl transition-all shadow-md shadow-brand-500/20 flex items-center gap-1.5 whitespace-nowrap">
+          <span>+ Add</span>
+        </button>
+      </form>
+
+      <!-- Scrollable List -->
+      <div id="itemsContainer" class="max-h-44 overflow-y-auto space-y-2 pr-1">
+        <!-- Rendered items go here -->
+      </div>
+
+      <div class="pt-3 mt-2 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+        <span>Click checkbox to mark complete</span>
+        <button id="clearAllItems" class="text-rose-400 hover:text-rose-300 underline font-medium">Clear All</button>
+      </div>
+    </div>
+
+    <!-- Card 5: Diagnostic & Environment Details -->
+    <div class="glass-card rounded-2xl p-6 flex flex-col justify-between shadow-xl transition-all hover:scale-[1.01]">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800/80">
+        <div class="flex items-center gap-2">
+          <span class="text-brand-500">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </span>
+          <h2 class="font-semibold text-slate-200">Client Environment</h2>
+        </div>
+        <span class="text-xs text-slate-400 font-mono">Viewport</span>
+      </div>
+
+      <div class="my-4 space-y-2.5 text-xs font-mono">
+        <div class="flex justify-between items-center bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+          <span class="text-slate-400">Screen Resolution:</span>
+          <span id="diagScreen" class="text-slate-200 font-semibold">Detecting...</span>
+        </div>
+        <div class="flex justify-between items-center bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+          <span class="text-slate-400">Viewport Size:</span>
+          <span id="diagViewport" class="text-brand-400 font-semibold">Detecting...</span>
+        </div>
+        <div class="flex justify-between items-center bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+          <span class="text-slate-400">Online Status:</span>
+          <span id="diagOnline" class="text-emerald-400 font-semibold">Online</span>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-slate-800/80">
+        <button id="copySummaryBtn" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs rounded-xl border border-slate-700 transition-all flex items-center justify-center gap-2">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          Copy Info to Clipboard
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Floating Toast Notifications Container -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- Footer -->
+  <footer class="relative z-10 w-full border-t border-slate-800/80 py-4 px-6 text-center text-xs text-slate-500">
+    <p>⚡ HTML Single-File Interactive Test Suite • Open Console (<span class="font-mono text-slate-400">F12</span>) to view real-time log events.</p>
+  </footer>
+
+  <!-- Hidden clipboard buffer helper -->
+  <textarea id="clipboardBuffer" class="sr-only" aria-hidden="true"></textarea>
+
+  <script>
+    // --- 1. Theme Switcher System ---
+    function setTheme(themeName) {
+      document.body.removeAttribute('data-theme');
+      if (themeName !== 'indigo') {
+        document.body.setAttribute('data-theme', themeName);
+      }
+      triggerToast('info', `Theme switched to: ${themeName.toUpperCase()}`);
+    }
+
+    // --- 2. Live Digital Clock ---
+    let is24Hour = false;
+
+    function updateClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      let ampm = '';
+
+      if (!is24Hour) {
+        ampm = hours >= 12 ? ' PM' : ' AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // 0 becomes 12
+      }
+
+      const formattedHours = String(hours).padStart(2, '0');
+      const timeString = `${formattedHours}:${minutes}:${seconds}${ampm}`;
+      
+      const clockElement = document.getElementById('digitalClock');
+      if (clockElement) clockElement.textContent = timeString;
+
+      const dateOptions = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+      const dateElement = document.getElementById('digitalDate');
+      if (dateElement) dateElement.textContent = now.toLocaleDateString('hi-IN', dateOptions);
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    document.getElementById('toggleTimeFormat').addEventListener('click', () => {
+      is24Hour = !is24Hour;
+      document.getElementById('toggleTimeFormat').textContent = is24Hour ? 'Toggle 12H' : 'Toggle 24H';
+      updateClock();
+    });
+
+    // --- STREAMING_CHUNK:Implementing counter and list handling logic... ---
+    // --- 3. Interactive Counter Logic ---
+    let counter = 0;
+    let stepSize = 1;
+
+    const counterValEl = document.getElementById('counterValue');
+    const btnIncrement = document.getElementById('btnIncrement');
+    const btnDecrement = document.getElementById('btnDecrement');
+    const btnReset = document.getElementById('btnReset');
+    const stepButtons = document.querySelectorAll('.step-btn');
+    const counterStatus = document.getElementById('counterStatus');
+
+    function updateCounterDisplay() {
+      counterValEl.textContent = counter;
+      counterValEl.style.transform = 'scale(1.15)';
+      setTimeout(() => {
+        counterValEl.style.transform = 'scale(1)';
+      }, 120);
+    }
+
+    btnIncrement.addEventListener('click', () => {
+      counter += stepSize;
+      updateCounterDisplay();
+    });
+
+    btnDecrement.addEventListener('click', () => {
+      counter -= stepSize;
+      updateCounterDisplay();
+    });
+
+    btnReset.addEventListener('click', () => {
+      counter = 0;
+      updateCounterDisplay();
+      triggerToast('info', 'Counter has been reset to 0');
+    });
+
+    stepButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        stepSize = parseInt(e.target.getAttribute('data-step'), 10);
+        stepButtons.forEach(b => {
+          b.className = 'step-btn px-2 py-0.5 rounded bg-slate-800 text-slate-300 hover:bg-slate-700';
+        });
+        e.target.className = 'step-btn px-2 py-0.5 rounded bg-brand-500/20 text-brand-400 font-bold';
+        counterStatus.textContent = `Step: ${stepSize}`;
+      });
+    });
+
+    // --- 4. Dynamic Task / Items List (CRUD DOM Testing) ---
+    let items = [
+      { id: 1, text: 'HTML DOM structure render test', completed: true },
+      { id: 2, text: 'CSS Tailwind classes hydration test', completed: true },
+      { id: 3, text: 'JavaScript event-listeners active', completed: false }
+    ];
+
+    const itemsContainer = document.getElementById('itemsContainer');
+    const itemForm = document.getElementById('itemForm');
+    const itemInputField = document.getElementById('itemInputField');
+    const itemCount = document.getElementById('itemCount');
+    const clearAllItems = document.getElementById('clearAllItems');
+
+    function renderItems() {
+      itemsContainer.innerHTML = '';
+      itemCount.textContent = `${items.length} Items`;
+
+      if (items.length === 0) {
+        itemsContainer.innerHTML = `<div class="text-center py-6 text-xs text-slate-500 italic">No test items yet. Add one above!</div>`;
+        return;
+      }
+
+      items.forEach(item => {
+        const itemRow = document.createElement('div');
+        itemRow.className = 'flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 hover:border-slate-700 transition-all group';
+
+        const leftSide = document.createElement('div');
+        leftSide.className = 'flex items-center gap-2.5 flex-1 min-w-0';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = item.completed;
+        checkbox.className = 'w-4 h-4 rounded text-brand-600 bg-slate-800 border-slate-700 focus:ring-0 cursor-pointer';
+        checkbox.onchange = () => {
+          item.completed = checkbox.checked;
+          renderItems();
+        };
+
+        const label = document.createElement('span');
+        label.textContent = item.text;
+        label.className = `text-xs truncate cursor-pointer select-none ${item.completed ? 'line-through text-slate-500' : 'text-slate-200'}`;
+        label.onclick = () => {
+          item.completed = !item.completed;
+          renderItems();
+        };
+
+        leftSide.appendChild(checkbox);
+        leftSide.appendChild(label);
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.innerHTML = '&times;';
+        deleteBtn.className = 'text-slate-500 hover:text-rose-400 font-bold text-base px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity';
+        deleteBtn.onclick = () => {
+          items = items.filter(i => i.id !== item.id);
+          renderItems();
+        };
+
+        itemRow.appendChild(leftSide);
+        itemRow.appendChild(deleteBtn);
+        itemsContainer.appendChild(itemRow);
+      });
+    }
+
+    itemForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = itemInputField.value.trim();
+      if (!val) return;
+      items.push({ id: Date.now(), text: val, completed: false });
+      itemInputField.value = '';
+      renderItems();
+      triggerToast('success', `Added item: "${val}"`);
+    });
+
+    clearAllItems.addEventListener('click', () => {
+      if (items.length === 0) return;
+      items = [];
+      renderItems();
+      triggerToast('info', 'All test items have been removed.');
+    });
+
+    renderItems();
+
+    // --- STREAMING_CHUNK:Configuring toast notifications and theme management... ---
+    // --- 5. Custom Dynamic Toast Engine (No window.alert) ---
+    function triggerToast(type = 'info', message = null) {
+      const container = document.getElementById('toastContainer');
+      const inputVal = document.getElementById('toastInput').value.trim();
+      const text = message || (inputVal || 'Action completed successfully!');
+
+      const toast = document.createElement('div');
+      toast.className = 'pointer-events-auto flex items-center justify-between gap-3 p-3.5 rounded-xl shadow-2xl border text-xs font-medium transform translate-y-3 opacity-0 transition-all duration-300';
+
+      if (type === 'success') {
+        toast.classList.add('bg-emerald-950/90', 'border-emerald-700/60', 'text-emerald-200');
+        toast.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="text-emerald-400 font-bold">✓</span>
+            <span>${text}</span>
+          </div>
+        `;
+      } else if (type === 'error') {
+        toast.classList.add('bg-rose-950/90', 'border-rose-700/60', 'text-rose-200');
+        toast.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="text-rose-400 font-bold">⚠️</span>
+            <span>${text}</span>
+          </div>
+        `;
+      } else {
+        toast.classList.add('bg-slate-900/95', 'border-slate-700', 'text-slate-200');
+        toast.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="text-brand-400 font-bold">ℹ</span>
+            <span>${text}</span>
+          </div>
+        `;
+      }
+
+      container.appendChild(toast);
+
+      // Trigger animation
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-3', 'opacity-0');
+      });
+
+      // Auto dismiss after 3.2 seconds
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-x-6');
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    // --- 6. Diagnostics & Clipboard Helper ---
+    function updateDiagnostics() {
+      const screenEl = document.getElementById('diagScreen');
+      const viewportEl = document.getElementById('diagViewport');
+      const onlineEl = document.getElementById('diagOnline');
+
+      if (screenEl) screenEl.textContent = `${window.screen.width} × ${window.screen.height}`;
+      if (viewportEl) viewportEl.textContent = `${window.innerWidth} × ${window.innerHeight} px`;
+      if (onlineEl) {
+        onlineEl.textContent = navigator.onLine ? 'Connected' : 'Offline';
+        onlineEl.className = navigator.onLine ? 'text-emerald-400 font-semibold' : 'text-rose-400 font-semibold';
+      }
+    }
+
+    window.addEventListener('resize', updateDiagnostics);
+    window.addEventListener('online', updateDiagnostics);
+    window.addEventListener('offline', updateDiagnostics);
+    updateDiagnostics();
+
+    // Copy diagnostics using iframe-safe execCommand
+    document.getElementById('copySummaryBtn').addEventListener('click', () => {
+      const summaryText = `[Test Bench Status]\nResolution: ${window.screen.width}x${window.screen.height}\nViewport: ${window.innerWidth}x${window.innerHeight}\nCounter: ${counter}\nTasks: ${items.length}\nDate: ${new Date().toLocaleString()}`;
+      
+      const buffer = document.getElementById('clipboardBuffer');
+      buffer.value = summaryText;
+      buffer.select();
+      buffer.setSelectionRange(0, 99999);
+      try {
+        document.execCommand('copy');
+        triggerToast('success', 'Diagnostic info copied to clipboard!');
+      } catch (err) {
+        triggerToast('error', 'Clipboard copy failed.');
+      }
+    });
+
+    console.log('%c[Test Bench Initialized Successfully] 🚀', 'color: #6366f1; font-weight: bold; font-size: 14px;');
+  </script>
+</body>
+</html>
+```
